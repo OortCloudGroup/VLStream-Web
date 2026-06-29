@@ -445,6 +445,7 @@ const topMenus = [
   { key: 'workspace', title: '工作台' },
   { key: 'video-aggregation', title: '视频汇聚' },
   { key: 'decision-ai', title: '决策式AI' },
+  { key: 'active-safety', title: '主动安全' },
   { key: 'algorithm-warehouse', title: '算法仓库' },
   { key: 'ai-computing', title: 'AI算力调度' },
   { key: 'system-management', title: '系统管理' }
@@ -468,6 +469,33 @@ const menuRoutesMap = {
     { path: '/algorithm-arrangement', meta: { title: '算法配置', icon: '算法配置' } },
     { path: '/intelligent-analysis-request', meta: { title: '智能分析申请', icon: '智能分析申请' } },
     { path: '/algorithm-task', meta: { title: '任务配置', icon: '任务配置' } },
+  ],
+  'active-safety': [
+    {
+      path: '/active-safety/events',
+      meta: { title: '事件管理', icon: '事件' },
+      children: [
+        { path: '/active-safety/events/secure', meta: { title: '主动安全', icon: '监控告警' } }
+      ]
+    },
+    {
+      path: '/active-safety/work-orders',
+      meta: { title: '工单管理', icon: '岗位管理' },
+      children: [
+        { path: '/active-safety/work-orders/my', meta: { title: '我的工单', icon: '角色管理' } },
+        { path: '/active-safety/work-orders/pending', meta: { title: '待办工单', icon: '事件' } },
+        { path: '/active-safety/work-orders/completed', meta: { title: '已办工单', icon: '标签管理' } },
+        { path: '/active-safety/work-orders/claimable', meta: { title: '可接工单', icon: '智能分析结果' } }
+      ]
+    },
+    {
+      path: '/active-safety/settings',
+      meta: { title: '系统设置', icon: '摄像机设置' },
+      children: [
+        { path: '/active-safety/settings/secure', meta: { title: '主动安全', icon: '摄像机设置' } },
+        { path: '/active-safety/settings/work-orders', meta: { title: '工单设置', icon: '摄像机设置' } }
+      ]
+    }
   ],
   'algorithm-warehouse': [
     { path: '/algorithm-management', meta: { title: '算法管理', icon: '算法管理' } },
@@ -507,13 +535,21 @@ const currentMenuRoutes = computed(() => {
   return menuRoutesMap[activeTopMenu.value] || []
 })
 
-// 处理顶部菜单点击
+/**
+ * 处理顶部菜单的点击事件
+ * 如果点击的是“工作台”，跳转到 /workspace 页面
+ * 如果点击的是“主动安全”，默认跳转到主动安全事件管理页面 /active-safety/events/secure
+ * 其他菜单默认跳转到对应侧边栏的第一个路由
+ * @param {string} menuKey 顶部菜单对应的 key
+ */
 const handleTopMenuClick = (menuKey) => {
   activeTopMenu.value = menuKey
   
   // 根据菜单切换到对应的默认路由
   if (menuKey === 'workspace') {
     router.push('/workspace') // 工作台页面
+  } else if (menuKey === 'active-safety') {
+    router.push('/active-safety/events/secure') // 默认跳转到主动安全页面
   } else {
     const routes = menuRoutesMap[menuKey]
     if (routes && routes.length > 0) {

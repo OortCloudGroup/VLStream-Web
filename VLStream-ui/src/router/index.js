@@ -215,6 +215,49 @@ const routes = [
         name: 'SystemApiScopeManagement',
         component: () => import('@/views/System/ApiScopeManagement.vue'),
         meta: { title: '接口权限', icon: '接口权限' }
+      },
+      // === 主动安全模块路由配置 ===
+      {
+        path: '/active-safety/events/secure',
+        name: 'ActiveSafetySecureEvents',
+        component: () => import('@/views/ActiveSafety/SecureEvents.vue'),
+        meta: { title: '主动安全事件', icon: '安全' }
+      },
+      {
+        path: '/active-safety/work-orders/my',
+        name: 'ActiveSafetyWorkOrdersMy',
+        component: () => import('@/views/ActiveSafety/WorkOrderList.vue'),
+        meta: { title: '我的工单', icon: '工单' }
+      },
+      {
+        path: '/active-safety/work-orders/pending',
+        name: 'ActiveSafetyWorkOrdersPending',
+        component: () => import('@/views/ActiveSafety/WorkOrderList.vue'),
+        meta: { title: '待办工单', icon: '工单' }
+      },
+      {
+        path: '/active-safety/work-orders/completed',
+        name: 'ActiveSafetyWorkOrdersCompleted',
+        component: () => import('@/views/ActiveSafety/WorkOrderList.vue'),
+        meta: { title: '已办工单', icon: '工单' }
+      },
+      {
+        path: '/active-safety/work-orders/claimable',
+        name: 'ActiveSafetyWorkOrdersClaimable',
+        component: () => import('@/views/ActiveSafety/WorkOrderList.vue'),
+        meta: { title: '可接工单', icon: '工单' }
+      },
+      {
+        path: '/active-safety/settings/secure',
+        name: 'ActiveSafetySettingsSecure',
+        component: () => import('@/views/ActiveSafety/SecureSettings.vue'),
+        meta: { title: '主动安全设置', icon: '设置' }
+      },
+      {
+        path: '/active-safety/settings/work-orders',
+        name: 'ActiveSafetySettingsWorkOrders',
+        component: () => import('@/views/ActiveSafety/WorkOrderSettings.vue'),
+        meta: { title: '工单设置', icon: '设置' }
       }
     ]
   }
