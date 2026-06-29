@@ -1,12 +1,15 @@
 import { defineConfig, loadEnv } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import path from 'path'
+import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
 
-// https://vitejs.dev/config/
+const vlsSrc = path.resolve(__dirname, 'src')
+
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '')
   const backendTarget = env.VITE_DEV_PROXY_TARGET || 'http://127.0.0.1:8080'
   const ssoTarget = env.VITE_SSO_PROXY_TARGET || 'http://oort.oortcloudsmart.com:21410/bus/apaas-sso'
+  const apaasTarget = env.VITE_APAAS_PROXY_TARGET || 'http://oort.oortcloudsmart.com:21410'
 
   const backendProxy = {
     target: backendTarget,
@@ -15,21 +18,33 @@ export default defineConfig(({ mode }) => {
   }
 
   return {
-    plugins: [vue()],
-    base: '/bus/vls-ui/',  // 生产环境的基础路径
+    plugins: [
+      vue(),
+      createSvgIconsPlugin({
+        iconDirs: [
+          path.resolve(vlsSrc, 'assets/img/svg'),
+          path.resolve(vlsSrc, 'assets/img/processui/svgs/VForm/svg'),
+          path.resolve(vlsSrc, 'assets/img/processui/svgs'),
+          path.resolve(vlsSrc, 'assets/img/unifi/svgs'),
+          path.resolve(vlsSrc, 'assets/img/message/svgs'),
+        ],
+        symbolId: 'icon-[dir]-[name]'
+      })
+    ],
+    base: '/bus/vls-ui/',
     resolve: {
-      alias: {
-        '@': path.resolve(__dirname, 'src')
-      }
+      alias: [
+        { find: '@/pages/events/views', replacement: path.resolve(vlsSrc, 'views/events') },
+        { find: '@/config/AppConfig', replacement: path.resolve(vlsSrc, 'config/AppConfig.js') },
+        { find: '@/utils/apaasApiBase', replacement: path.resolve(vlsSrc, 'utils/apaasApiBase.js') },
+        { find: '@', replacement: vlsSrc },
+        { find: '~@', replacement: path.resolve(vlsSrc, 'components/VForm') }
+      ],
+      extensions: ['.js', '.vue', '.json', '.ts', '.tsx']
     },
     server: {
       port: 3000,
-      host: '0.0.0.0',  // 允许所有IP访问
-      headers: {
-        // 临时移除COEP策略以允许跨域图片显示
-        // 'Cross-Origin-Embedder-Policy': 'require-corp',
-        // 'Cross-Origin-Opener-Policy': 'same-origin'
-      },
+      host: '0.0.0.0',
       proxy: {
         '/system': backendProxy,
         '/blade-auth': backendProxy,
@@ -46,6 +61,11 @@ export default defineConfig(({ mode }) => {
         '/api': backendProxy,
         '/sso': {
           target: ssoTarget,
+          changeOrigin: true,
+          secure: false
+        },
+        '/oort': {
+          target: apaasTarget,
           changeOrigin: true,
           secure: false
         }

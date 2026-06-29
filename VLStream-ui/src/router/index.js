@@ -220,44 +220,50 @@ const routes = [
       {
         path: '/active-safety/events/secure',
         name: 'ActiveSafetySecureEvents',
-        component: () => import('@/views/ActiveSafety/SecureEvents.vue'),
+        component: () => import('@/views/events/page/eventManagement/secure.vue'),
         meta: { title: '主动安全事件', icon: '安全' }
       },
       {
         path: '/active-safety/work-orders/my',
         name: 'ActiveSafetyWorkOrdersMy',
-        component: () => import('@/views/ActiveSafety/WorkOrderList.vue'),
+        component: () => import('@/views/events/page/myWorkorder/myWorkorder.vue'),
         meta: { title: '我的工单', icon: '工单' }
       },
       {
         path: '/active-safety/work-orders/pending',
         name: 'ActiveSafetyWorkOrdersPending',
-        component: () => import('@/views/ActiveSafety/WorkOrderList.vue'),
+        component: () => import('@/views/events/page/workOrderDesignManage/pendingWorkOrder.vue'),
         meta: { title: '待办工单', icon: '工单' }
       },
       {
         path: '/active-safety/work-orders/completed',
         name: 'ActiveSafetyWorkOrdersCompleted',
-        component: () => import('@/views/ActiveSafety/WorkOrderList.vue'),
+        component: () => import('@/views/events/page/workOrderDesignManage/completedWorkOrder.vue'),
         meta: { title: '已办工单', icon: '工单' }
       },
       {
         path: '/active-safety/work-orders/claimable',
         name: 'ActiveSafetyWorkOrdersClaimable',
-        component: () => import('@/views/ActiveSafety/WorkOrderList.vue'),
+        component: () => import('@/views/events/page/workOrderDesignManage/workOrderClaim.vue'),
         meta: { title: '可接工单', icon: '工单' }
       },
       {
         path: '/active-safety/settings/secure',
         name: 'ActiveSafetySettingsSecure',
-        component: () => import('@/views/ActiveSafety/SecureSettings.vue'),
+        component: () => import('@/views/events/page/eventManagement/sysSecure2.vue'),
         meta: { title: '主动安全设置', icon: '设置' }
       },
       {
         path: '/active-safety/settings/work-orders',
         name: 'ActiveSafetySettingsWorkOrders',
-        component: () => import('@/views/ActiveSafety/WorkOrderSettings.vue'),
+        component: () => import('@/views/events/page/eventManagement/sysWorkOrderSetting.vue'),
         meta: { title: '工单设置', icon: '设置' }
+      },
+      {
+        path: '/workOrderDetails',
+        name: 'ActiveSafetyWorkOrderDetails',
+        component: () => import('@/pages/task_center/views/page/workOrderDetailsStep.vue'),
+        meta: { title: '工单详情', icon: '设置' }
       }
     ]
   }
@@ -271,14 +277,14 @@ const router = createRouter({
 // 路由守卫
 router.beforeEach(async (to, from, next) => {
   console.log('路由跳转:', to.path)
-  
+
   try {
   // 如果访问登录页面或测试页面，直接通过
   if (to.path === '/login' || to.path === '/test-auth') {
     next()
     return
   }
-  
+
   // 强制清除旧的测试token
   const oldTestToken = 'c0c81bef2c934f829df667a202c99d1e'
   if (localStorage.getItem('accessToken') === oldTestToken) {
@@ -286,7 +292,7 @@ router.beforeEach(async (to, from, next) => {
     localStorage.removeItem('accessToken')
     localStorage.removeItem('userInfo')
   }
-  
+
   // 检查是否需要登录验证
   if (to.meta.requiresAuth) {
       try {
@@ -297,11 +303,11 @@ router.beforeEach(async (to, from, next) => {
       next()
       return
     }
-    
+
     // 如果没有外部平台token，尝试同步外部平台信息
     // console.log('没有外部平台token，尝试同步外部平台Session Storage信息')
     // 不跳转，让用户手动处理或显示登录页面
-    
+
     // 优先级2：检查URL中的accessToken（SSO跳转）
     const urlParams = new URLSearchParams(window.location.search)
     const urlAccessToken = urlParams.get('accessToken')
@@ -336,7 +342,7 @@ router.beforeEach(async (to, from, next) => {
         // 不再清除URL参数，让系统继续检查其他token
       }
     }
-    
+
     // 优先级2.5：检查URL中的token（兼容旧格式）
         try {
     const urlUserInfo = await authManager.checkUrlToken()
@@ -348,7 +354,7 @@ router.beforeEach(async (to, from, next) => {
         } catch (error) {
           console.error('检查URL token失败:', error)
     }
-    
+
     // 优先级2.5：检查Session Storage中的新token
     const sessionToken = sessionStorage.getItem('accessToken')
     // console.log('Session Storage中的token:', sessionToken)
@@ -370,7 +376,7 @@ router.beforeEach(async (to, from, next) => {
         sessionStorage.removeItem('accessToken')
       }
     }
-    
+
     // 优先级3：检查本地存储的token
         try {
     const localUserInfo = await authManager.checkLocalToken()
@@ -382,7 +388,7 @@ router.beforeEach(async (to, from, next) => {
         } catch (error) {
           console.error('检查本地token失败:', error)
     }
-    
+
     // 没有有效 token 时跳转登录页，避免后续业务接口持续返回 401。
     next({
       path: '/login',

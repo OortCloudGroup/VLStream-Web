@@ -14,22 +14,49 @@ import crudCommon from '@/mixins/crud.js';
 import axios from './utils/request';
 import basicContainer from './components/basic-container/main.vue';
 
+// 与 apaas-web events 项目保持一致的样式
+import '@/assets/style/index.scss'
+import 'virtual:svg-icons-register'
+
 window.$crudCommon = crudCommon;
 
-// 创建Vue应用
+// 同步 VLStream token 到 apaas 认证存储
+const vlsAccessToken = localStorage.getItem('accessToken')
+if (vlsAccessToken) {
+  localStorage.setItem('apaas_token', vlsAccessToken)
+  sessionStorage.setItem('token', vlsAccessToken)
+}
+
 const app = createApp(App)
 
-// 注册Element Plus图标
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
   app.component(key, component)
 }
 
 app.component('basicContainer', basicContainer);
 
+// 与 apaas-web events/main.ts 一致的全局组件注册
+import aiIconRemark from '@/components/aiIconRemark.vue'
+import TableSelf from '@/components/TableSelf.vue'
+import ButtonGroup from '@/components/buttonGroup.vue'
+import SearchHeightBox from '@/components/SearchHeightBox.vue'
+import ExportExcelPdf from '@/components/exportExcelPdf.vue'
+import Directive from '@/directive/index'
+import commonComponents from '@/components/index.js'
+import indexVform from '@/components/index_vform.js'
+
+app.component('AiIconRemark', aiIconRemark)
+app.component('TableSelf', TableSelf)
+app.component('ButtonGroup', ButtonGroup)
+app.component('SearchHeightBox', SearchHeightBox)
+app.component('ExportExcelPdf', ExportExcelPdf)
+app.use(Directive)
+app.use(commonComponents)
+app.use(indexVform)
+
 app.use(ElementPlus, {
   locale: zhCn,
 })
-// 使用插件
 app.use(ElementPlus)
 app.use(createPinia())
 app.use(router)
@@ -37,5 +64,4 @@ app.use(Avue, {
   axios,
   calcHeight: 10,
 });
-// 挂载应用
-app.mount('#app') 
+app.mount('#app')
