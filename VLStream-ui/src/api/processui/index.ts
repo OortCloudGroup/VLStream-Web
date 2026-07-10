@@ -8,18 +8,12 @@
 * @Copyright aPaaS-front-team. All rights reserved.
 */
 import { request } from '@/utils/service'
-import config from '@/config'
 import { apaasServiceUrl } from '@/utils/apaasApiBase'
-// import config from '@/config'
-import { useUserStoreHook } from '@/store/modules/useraPaas'
-const store = useUserStoreHook()
-const getToken = store.getStoreToken
 function commonFunc<T, K>(interfaceName: string, data: T, method: string, isParams = false) {
   let params = method === 'get' || method === 'delete' || method === 'GET' || method === 'DELETE' ? { params: data } : { data: data }
   if (isParams) {
     params = { params: data }
   }
-  config.headers.authorization = getToken()
   return request<K>({
     url: apaasServiceUrl('apaas-workflowforms', interfaceName),
     // url: '/workflow/' + interfaceName,

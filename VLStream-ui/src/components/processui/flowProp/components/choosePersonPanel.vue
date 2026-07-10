@@ -300,7 +300,7 @@ const roleListArr = ref([])
 function getRoleList() {
   // 角色拿统一用户的
   let data = {
-    accessToken: store.userInfo.accessToken,
+    accessToken: store.token || store.userInfo?.accessToken || '',
     page: 1,
     pagesize: 99,
     tenant_id: store.tenantId

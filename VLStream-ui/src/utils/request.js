@@ -35,15 +35,14 @@ export const getStoredToken = () => {
 }
 
 // 为请求写入 SpringBlade 识别的 Authorization 与 blade-auth 头。
-// SpringBlade 默认通过 "blade-auth" 请求头进行 JWT 身份认证，部分微服务或网关兼容 standard "Authorization" 头。
+// 只写入规范大小写，避免浏览器把 Authorization/authorization 合并成不可识别的重复 token。
 export const applyAuthHeaders = (config) => {
   const token = getStoredToken()
   if (token) {
     const authValue = token.toLowerCase().startsWith('bearer ') ? token : `Bearer ${token}`
     config.headers.Authorization = authValue
-    config.headers.authorization = authValue
     config.headers['blade-auth'] = authValue
-    config.headers.accesstoken = token
+    config.headers.AccessToken = token
   }
   return token
 }
@@ -51,7 +50,9 @@ export const applyAuthHeaders = (config) => {
 // 登录取 token 时必须使用 OAuth client Basic 认证，不能携带旧用户 token。
 export const applyBladeClientAuthHeaders = (config) => {
   delete config.headers.Authorization
+  delete config.headers.authorization
   delete config.headers['blade-auth']
+  delete config.headers.AccessToken
   delete config.headers.accesstoken
   config.headers.Authorization = BLADE_CLIENT_AUTH_HEADER
 }
