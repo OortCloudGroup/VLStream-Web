@@ -152,7 +152,7 @@ onMounted(() => {
 </script>
 <style lang="scss" scoped>
 .detailsStep {
-  height: 100%;
+  height: calc(100vh - 60px);
   background-color: var(--common-bg-color);
 
   .headerStep {

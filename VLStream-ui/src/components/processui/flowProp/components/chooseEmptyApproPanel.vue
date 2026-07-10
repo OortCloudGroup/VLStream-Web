@@ -55,7 +55,7 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue'
+import { ref, watch, inject } from 'vue'
 import AddressSetingDialog from '@/components/personHome/addressSetingDialog.vue'
 import id2HeadPic from '@/components/ID2HeadPic.vue'
 import id2Name from '@/components/ID2Name.vue'

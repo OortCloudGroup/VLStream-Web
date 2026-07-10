@@ -105,7 +105,7 @@
 
 import AddNode from './addNode.vue'
 import NodeWrap from './nodeWrap.vue'
-import { ref, reactive, onMounted, watch, computed } from 'vue'
+import { ref, reactive, onMounted, watch, computed, inject } from 'vue'
 import ApprovalProp from '../flowProp/approvalProp.vue'
 import NotifyNodeProp from '../flowProp/notifyNodeProp.vue'
 import CSProp from '../flowProp/csProp.vue'

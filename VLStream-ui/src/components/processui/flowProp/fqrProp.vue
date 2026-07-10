@@ -63,8 +63,7 @@
 
 <script setup>
 
-import { ref, onMounted } from 'vue'
-import { inject } from 'vue'
+import { ref, onMounted, inject } from 'vue'
 import { formAppList, formSynthesisList, getForm } from '@/api/processui'
 import FormPermissionTable from './components/formPermissionTable.vue'
 import { useFlowStore } from '@/store/modules/flow'
