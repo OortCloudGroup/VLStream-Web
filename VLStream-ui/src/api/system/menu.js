@@ -1,4 +1,10 @@
 import request from '@/utils/request'
+import {
+  mapBladeMenuToRuoyi,
+  mapRuoyiMenu,
+  toBladeList,
+  toStringIds
+} from './ruoyiCompat'
 
 /**
  * 获取所有菜单与按钮扁平列表 (前端可自行转换为树)
@@ -6,7 +12,13 @@ import request from '@/utils/request'
  * @returns {Promise} 返回请求响应的 Promise 对象
  */
 export function getMenuList(params) {
-  return request({ url: '/blade-system/menu/list', method: 'get', params })
+  const ruoyiParams = {
+    ...params,
+    menuName: params?.name || params?.menuName,
+    perms: params?.code || params?.perms
+  }
+  return request({ url: '/system/menu/list', method: 'get', params: ruoyiParams })
+    .then((response) => toBladeList(response, mapRuoyiMenu))
 }
 
 /**
@@ -15,7 +27,7 @@ export function getMenuList(params) {
  * @returns {Promise} 返回请求响应的 Promise 对象
  */
 export function getMenuOnlyList(params) {
-  return request({ url: '/blade-system/menu/menu-list', method: 'get', params })
+  return getMenuList(params)
 }
 
 /**
@@ -24,7 +36,12 @@ export function getMenuOnlyList(params) {
  * @returns {Promise} 返回请求响应的 Promise 对象
  */
 export function getMenuTree(params) {
-  return request({ url: '/blade-system/menu/tree', method: 'get', params })
+  return request({ url: '/system/menu/treeselect', method: 'get', params })
+    .then((response) => ({
+      ...response,
+      success: response?.code === 200,
+      data: response?.data || []
+    }))
 }
 
 /**
@@ -33,7 +50,16 @@ export function getMenuTree(params) {
  * @returns {Promise} 返回权限授权树的 Promise 对象
  */
 export function getGrantTree(params) {
-  return request({ url: '/blade-system/menu/grant-tree', method: 'get', params })
+  return request({ url: '/system/menu/treeselect', method: 'get', params })
+    .then((response) => ({
+      ...response,
+      success: response?.code === 200,
+      data: {
+        menu: response?.data || [],
+        dataScope: [],
+        apiScope: []
+      }
+    }))
 }
 
 /**
@@ -42,7 +68,17 @@ export function getGrantTree(params) {
  * @returns {Promise} 返回已选中的 key 列表
  */
 export function getRoleTreeKeys(roleIds) {
-  return request({ url: '/blade-system/menu/role-tree-keys', method: 'get', params: { roleIds } })
+  const roleId = toStringIds(roleIds)[0]
+  return request({ url: `/system/menu/roleMenuTreeselect/${encodeURIComponent(roleId)}`, method: 'get' })
+    .then((response) => ({
+      ...response,
+      success: response?.code === 200,
+      data: {
+        menu: response?.data?.checkedKeys || [],
+        dataScope: [],
+        apiScope: []
+      }
+    }))
 }
 
 /**
@@ -51,7 +87,12 @@ export function getRoleTreeKeys(roleIds) {
  * @returns {Promise} 返回操作结果的 Promise 对象
  */
 export function submitMenu(data) {
-  return request({ url: '/blade-system/menu/submit', method: 'post', data })
+  const payload = mapBladeMenuToRuoyi(data)
+  return request({
+    url: '/system/menu',
+    method: payload.menuId ? 'put' : 'post',
+    data: payload
+  })
 }
 
 /**
@@ -60,5 +101,10 @@ export function submitMenu(data) {
  * @returns {Promise} 返回操作结果的 Promise 对象
  */
 export function removeMenus(ids) {
-  return request({ url: '/blade-system/menu/remove', method: 'post', params: { ids } })
+  const menuIds = toStringIds(ids)
+  if (menuIds.length <= 1) {
+    return request({ url: `/system/menu/${encodeURIComponent(menuIds[0] || ids)}`, method: 'delete' })
+  }
+  return Promise.all(menuIds.map((menuId) => request({ url: `/system/menu/${encodeURIComponent(menuId)}`, method: 'delete' })))
+    .then(() => ({ code: 200, success: true, msg: '操作成功', data: true }))
 }

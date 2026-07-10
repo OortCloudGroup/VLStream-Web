@@ -114,7 +114,11 @@ export function policySave(data) {
 
 // 刷新token
 export function refreshToken(data) {
-  return commonFunc('/sso/v1/refreshToken', data, 'POST')
+  return request({
+    url: '/sso/v1/refreshToken',
+    method: 'POST',
+    data
+  })
 }
 
 // 清除登录错误次数限制

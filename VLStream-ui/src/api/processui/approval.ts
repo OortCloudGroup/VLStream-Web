@@ -9,6 +9,7 @@
 */
 import { request } from '@/utils/service'
 import config from '@/config'
+import { apaasServiceUrl } from '@/utils/apaasApiBase'
 // import config from '@/config'
 import { useUserStoreHook } from '@/store/modules/useraPaas'
 const store = useUserStoreHook()
@@ -21,7 +22,7 @@ function commonFunc<T, K>(interfaceName: string, data: T, method: string, isPara
   }
   config.headers.authorization = getToken()
   return request<K>({
-    url: config.URL + config.gateWay + 'apaas-smart-approval' + interfaceName,
+    url: apaasServiceUrl('apaas-workflowforms', interfaceName),
     // url: '/workflow/' + interfaceName,
     method: method,
     ...params,
@@ -34,7 +35,7 @@ function commonFunc<T, K>(interfaceName: string, data: T, method: string, isPara
 
 function commonFuncB<T, K>(interfaceName: string, data: T, method: string) {
   return request<K>({
-    url: config.URL + config.gateWay + 'apaas-smart-approval' + interfaceName,
+    url: apaasServiceUrl('apaas-workflowforms', interfaceName),
     method: method,
     data: data,
     responseType: 'blob'

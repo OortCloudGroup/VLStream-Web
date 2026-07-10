@@ -1,4 +1,11 @@
 import request from '@/utils/request'
+import {
+  mapBladeUserToRuoyi,
+  mapRuoyiUser,
+  toBladePage,
+  toRuoyiPageParams,
+  toStringIds
+} from './ruoyiCompat'
 
 /**
  * 分页查询用户列表
@@ -6,7 +13,14 @@ import request from '@/utils/request'
  * @returns {Promise} 返回请求响应的 Promise 对象
  */
 export function getUserList(params) {
-  return request({ url: '/blade-system/user/list', method: 'get', params })
+  const ruoyiParams = {
+    ...toRuoyiPageParams(params),
+    userName: params?.account || params?.userName,
+    nickName: params?.realName || params?.nickName || params?.name,
+    phonenumber: params?.phone || params?.phonenumber
+  }
+  return request({ url: '/system/user/list', method: 'get', params: ruoyiParams })
+    .then((response) => toBladePage(response, mapRuoyiUser, params))
 }
 
 /**
@@ -15,7 +29,16 @@ export function getUserList(params) {
  * @returns {Promise} 返回详情的 Promise 对象
  */
 export function getUserDetail(params) {
-  return request({ url: '/blade-system/user/detail', method: 'get', params })
+  const userId = params?.id || params?.userId
+  return request({ url: `/system/user/${encodeURIComponent(userId)}`, method: 'get' })
+    .then((response) => ({
+      ...response,
+      success: response?.code === 200,
+      data: mapRuoyiUser(response?.data?.user || {}, {
+        roleIds: response?.data?.roleIds || [],
+        postIds: response?.data?.postIds || []
+      })
+    }))
 }
 
 /**
@@ -24,7 +47,7 @@ export function getUserDetail(params) {
  * @returns {Promise} 返回操作结果的 Promise 对象
  */
 export function submitUser(data) {
-  return request({ url: '/blade-system/user/submit', method: 'post', data })
+  return request({ url: '/system/user', method: 'post', data: mapBladeUserToRuoyi(data) })
 }
 
 /**
@@ -33,7 +56,7 @@ export function submitUser(data) {
  * @returns {Promise} 返回操作结果的 Promise 对象
  */
 export function updateUser(data) {
-  return request({ url: '/blade-system/user/update', method: 'post', data })
+  return request({ url: '/system/user', method: 'put', data: mapBladeUserToRuoyi(data) })
 }
 
 /**
@@ -42,7 +65,7 @@ export function updateUser(data) {
  * @returns {Promise} 返回操作结果的 Promise 对象
  */
 export function removeUsers(ids) {
-  return request({ url: '/blade-system/user/remove', method: 'post', params: { ids } })
+  return request({ url: `/system/user/${encodeURIComponent(ids)}`, method: 'delete' })
 }
 
 /**
@@ -52,7 +75,12 @@ export function removeUsers(ids) {
  * @returns {Promise} 返回操作结果的 Promise 对象
  */
 export function grantUserRoles(userIds, roleIds) {
-  return request({ url: '/blade-system/user/grant', method: 'post', params: { userIds, roleIds } })
+  const userId = toStringIds(userIds)[0]
+  return request({
+    url: '/system/user/authRole',
+    method: 'put',
+    params: { userId, roleIds: toStringIds(roleIds).join(',') }
+  })
 }
 
 /**
@@ -61,7 +89,12 @@ export function grantUserRoles(userIds, roleIds) {
  * @returns {Promise} 返回操作结果 of the Promise 对象
  */
 export function resetUserPassword(userIds) {
-  return request({ url: '/blade-system/user/reset-password', method: 'post', params: { userIds } })
+  const userId = toStringIds(userIds)[0]
+  return request({
+    url: '/system/user/resetPwd',
+    method: 'put',
+    data: { userId, password: 'Codex@123456' }
+  })
 }
 
 /**
@@ -70,5 +103,10 @@ export function resetUserPassword(userIds) {
  * @returns {Promise} 返回操作结果的 Promise 对象
  */
 export function unlockUsers(userIds) {
-  return request({ url: '/blade-system/user/unlock', method: 'post', params: { userIds } })
+  const userId = toStringIds(userIds)[0]
+  return request({
+    url: '/system/user/changeStatus',
+    method: 'put',
+    data: { userId, status: '0' }
+  })
 }

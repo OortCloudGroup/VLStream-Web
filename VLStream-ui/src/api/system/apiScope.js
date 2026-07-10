@@ -15,7 +15,7 @@ export function getApiScopeList(params) {
  * @returns {Promise} 返回接口权限详情的 Promise 对象
  */
 export function getApiScopeDetail(params) {
-  return request({ url: '/blade-system/api-scope/detail', method: 'get', params })
+  return Promise.resolve({ code: 200, success: true, msg: '操作成功', data: null, params })
 }
 
 /**
@@ -24,7 +24,12 @@ export function getApiScopeDetail(params) {
  * @returns {Promise} 返回操作结果的 Promise 对象
  */
 export function submitApiScope(data) {
-  return request({ url: '/blade-system/api-scope/submit', method: 'post', data })
+  return Promise.resolve({
+    code: 500,
+    success: false,
+    msg: '当前后端未提供接口权限范围维护接口',
+    data
+  })
 }
 
 /**
@@ -33,5 +38,10 @@ export function submitApiScope(data) {
  * @returns {Promise} 返回操作结果的 Promise 对象
  */
 export function removeApiScopes(ids) {
-  return request({ url: '/blade-system/api-scope/remove', method: 'post', params: { ids } })
+  return Promise.resolve({
+    code: 500,
+    success: false,
+    msg: '当前后端未提供接口权限范围删除接口',
+    data: ids
+  })
 }

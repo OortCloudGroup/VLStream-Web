@@ -1,5 +1,5 @@
 import { request } from '@/utils/service'
-import config from '@/config'
+import { apaasServiceUrl } from '@/utils/apaasApiBase'
 
 // function commonFunc<T, K>(interfaceName: string, data: T, method = 'post') {
 //   return request<K>({
@@ -10,7 +10,7 @@ import config from '@/config'
 // }
 function commonFuncB<T, K>(interfaceName: string, data: T, method = 'post') {
   return request<K>({
-    url: config.URL + config.gateWay + 'apaas-location-service/' + interfaceName,
+    url: apaasServiceUrl('apaas-location-service', interfaceName),
     method: method,
     data: data
   })

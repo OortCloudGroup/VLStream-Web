@@ -1,4 +1,11 @@
 import request from '@/utils/request'
+import {
+  mapBladePostToRuoyi,
+  mapRuoyiPost,
+  toBladeList,
+  toBladePage,
+  toRuoyiPageParams
+} from './ruoyiCompat'
 
 /**
  * 分页查询岗位列表
@@ -6,7 +13,9 @@ import request from '@/utils/request'
  * @returns {Promise} 返回岗位分页数据
  */
 export function getPostList(params) {
-  return request({ url: '/blade-system/post/list', method: 'get', params })
+  const ruoyiParams = toRuoyiPageParams(params)
+  return request({ url: '/system/post/list', method: 'get', params: ruoyiParams })
+    .then((response) => toBladePage(response, mapRuoyiPost, params))
 }
 
 /**
@@ -15,7 +24,8 @@ export function getPostList(params) {
  * @returns {Promise} 返回岗位选项数据
  */
 export function getPostSelect(params) {
-  return request({ url: '/blade-system/post/select', method: 'get', params })
+  return request({ url: '/system/post/optionselect', method: 'get', params })
+    .then((response) => toBladeList(response, mapRuoyiPost))
 }
 
 /**
@@ -24,7 +34,12 @@ export function getPostSelect(params) {
  * @returns {Promise} 返回请求响应的 Promise 对象
  */
 export function submitPost(data) {
-  return request({ url: '/blade-system/post/submit', method: 'post', data })
+  const payload = mapBladePostToRuoyi(data)
+  return request({
+    url: '/system/post',
+    method: payload.postId ? 'put' : 'post',
+    data: payload
+  })
 }
 
 /**
@@ -33,5 +48,5 @@ export function submitPost(data) {
  * @returns {Promise} 返回请求响应的 Promise 对象
  */
 export function removePosts(ids) {
-  return request({ url: '/blade-system/post/remove', method: 'post', params: { ids } })
+  return request({ url: `/system/post/${encodeURIComponent(ids)}`, method: 'delete' })
 }

@@ -1,4 +1,10 @@
 import request from '@/utils/request'
+import {
+  mapBladeDeptToRuoyi,
+  mapRuoyiDept,
+  toBladeList,
+  toStringIds
+} from './ruoyiCompat'
 
 /**
  * 获取部门列表
@@ -6,7 +12,12 @@ import request from '@/utils/request'
  * @returns {Promise} 返回部门扁平列表数据
  */
 export function getDeptList(params) {
-  return request({ url: '/blade-system/dept/list', method: 'get', params })
+  const ruoyiParams = {
+    ...params,
+    deptName: params?.deptName || params?.fullName
+  }
+  return request({ url: '/system/dept/list', method: 'get', params: ruoyiParams })
+    .then((response) => toBladeList(response, mapRuoyiDept))
 }
 
 /**
@@ -15,7 +26,8 @@ export function getDeptList(params) {
  * @returns {Promise} 返回部门树形数据
  */
 export function getDeptTree(params) {
-  return request({ url: '/blade-system/dept/tree', method: 'get', params })
+  return request({ url: '/system/dept/list', method: 'get', params })
+    .then((response) => toBladeList(response, mapRuoyiDept))
 }
 
 /**
@@ -24,7 +36,12 @@ export function getDeptTree(params) {
  * @returns {Promise} 返回请求响应的 Promise 对象
  */
 export function submitDept(data) {
-  return request({ url: '/blade-system/dept/submit', method: 'post', data })
+  const payload = mapBladeDeptToRuoyi(data)
+  return request({
+    url: '/system/dept',
+    method: payload.deptId ? 'put' : 'post',
+    data: payload
+  })
 }
 
 /**
@@ -33,5 +50,10 @@ export function submitDept(data) {
  * @returns {Promise} 返回请求响应的 Promise 对象
  */
 export function removeDepts(ids) {
-  return request({ url: '/blade-system/dept/remove', method: 'post', params: { ids } })
+  const deptIds = toStringIds(ids)
+  if (deptIds.length <= 1) {
+    return request({ url: `/system/dept/${encodeURIComponent(deptIds[0] || ids)}`, method: 'delete' })
+  }
+  return Promise.all(deptIds.map((deptId) => request({ url: `/system/dept/${encodeURIComponent(deptId)}`, method: 'delete' })))
+    .then(() => ({ code: 200, success: true, msg: '操作成功', data: true }))
 }

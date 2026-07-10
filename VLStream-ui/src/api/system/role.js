@@ -1,4 +1,10 @@
 import request from '@/utils/request'
+import {
+  mapBladeRoleToRuoyi,
+  mapRuoyiRole,
+  toBladeRows,
+  toStringIds
+} from './ruoyiCompat'
 
 /**
  * 分页或条件查询角色列表
@@ -6,7 +12,12 @@ import request from '@/utils/request'
  * @returns {Promise} 返回请求响应的 Promise 对象
  */
 export function getRoleList(params) {
-  return request({ url: '/blade-system/role/list', method: 'get', params })
+  const ruoyiParams = {
+    ...params,
+    roleKey: params?.roleAlias || params?.roleKey
+  }
+  return request({ url: '/system/role/list', method: 'get', params: ruoyiParams })
+    .then((response) => toBladeRows(response, mapRuoyiRole))
 }
 
 /**
@@ -15,7 +26,12 @@ export function getRoleList(params) {
  * @returns {Promise} 返回请求响应的 Promise 对象
  */
 export function getRoleTree(params) {
-  return request({ url: '/blade-system/role/tree', method: 'get', params })
+  const ruoyiParams = {
+    ...params,
+    roleKey: params?.roleAlias || params?.roleKey
+  }
+  return request({ url: '/system/role/list', method: 'get', params: ruoyiParams })
+    .then((response) => toBladeRows(response, mapRuoyiRole))
 }
 
 /**
@@ -24,7 +40,12 @@ export function getRoleTree(params) {
  * @returns {Promise} 返回请求响应的 Promise 对象
  */
 export function getRoleTreeById(roleId) {
-  return request({ url: '/blade-system/role/tree-by-id', method: 'get', params: { roleId } })
+  return request({ url: `/system/role/${encodeURIComponent(roleId)}`, method: 'get' })
+    .then((response) => ({
+      ...response,
+      success: response?.code === 200,
+      data: mapRuoyiRole(response?.data || {})
+    }))
 }
 
 /**
@@ -33,7 +54,12 @@ export function getRoleTreeById(roleId) {
  * @returns {Promise} 返回操作结果的 Promise 对象
  */
 export function submitRole(data) {
-  return request({ url: '/blade-system/role/submit', method: 'post', data })
+  const payload = mapBladeRoleToRuoyi(data)
+  return request({
+    url: '/system/role',
+    method: payload.roleId ? 'put' : 'post',
+    data: payload
+  })
 }
 
 /**
@@ -42,7 +68,7 @@ export function submitRole(data) {
  * @returns {Promise} 返回操作结果的 Promise 对象
  */
 export function removeRoles(ids) {
-  return request({ url: '/blade-system/role/remove', method: 'post', params: { ids } })
+  return request({ url: `/system/role/${encodeURIComponent(ids)}`, method: 'delete' })
 }
 
 /**
@@ -51,5 +77,14 @@ export function removeRoles(ids) {
  * @returns {Promise} 返回操作结果的 Promise 对象
  */
 export function grantRole(data) {
-  return request({ url: '/blade-system/role/grant', method: 'post', data })
+  const roleId = toStringIds(data?.roleIds)[0]
+  return request({ url: `/system/role/${encodeURIComponent(roleId)}`, method: 'get' })
+    .then((response) => {
+      const role = mapBladeRoleToRuoyi({
+        ...response?.data,
+        id: roleId,
+        menuIds: data?.menuIds
+      })
+      return request({ url: '/system/role', method: 'put', data: role })
+    })
 }

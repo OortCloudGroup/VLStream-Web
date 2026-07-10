@@ -15,7 +15,7 @@ export function getDataScopeList(params) {
  * @returns {Promise} 返回数据权限详情的 Promise 对象
  */
 export function getDataScopeDetail(params) {
-  return request({ url: '/blade-system/data-scope/detail', method: 'get', params })
+  return Promise.resolve({ code: 200, success: true, msg: '操作成功', data: null, params })
 }
 
 /**
@@ -24,7 +24,12 @@ export function getDataScopeDetail(params) {
  * @returns {Promise} 返回操作结果的 Promise 对象
  */
 export function submitDataScope(data) {
-  return request({ url: '/blade-system/data-scope/submit', method: 'post', data })
+  return Promise.resolve({
+    code: 500,
+    success: false,
+    msg: '当前后端未提供数据权限范围维护接口',
+    data
+  })
 }
 
 /**
@@ -33,5 +38,10 @@ export function submitDataScope(data) {
  * @returns {Promise} 返回操作结果的 Promise 对象
  */
 export function removeDataScopes(ids) {
-  return request({ url: '/blade-system/data-scope/remove', method: 'post', params: { ids } })
+  return Promise.resolve({
+    code: 500,
+    success: false,
+    msg: '当前后端未提供数据权限范围删除接口',
+    data: ids
+  })
 }
