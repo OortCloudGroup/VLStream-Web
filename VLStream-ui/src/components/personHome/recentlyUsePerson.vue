@@ -54,7 +54,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import { debounce } from 'lodash-es'
-import { usedDel, usedGet } from '@/api/unifiedUsert/sso'
+import { usedDel, usedGet } from '@/api/system/directory'
 import { useUserStore } from '@/store/modules/useraPaas'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { ElCheckbox, ElCheckboxGroup } from 'element-plus'

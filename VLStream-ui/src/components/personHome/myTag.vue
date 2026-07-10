@@ -78,7 +78,7 @@ Copyright apaas-front-team. All rights reserved.
 </template>
 
 <script>
-import { tagList, tagUserList } from '@/api/unifiedUsert/sso'
+import { tagList, tagUserList } from '@/api/system/directory'
 import { useUserStore } from '@/store/modules/useraPaas'
 import { ElCheckbox, ElCheckboxGroup } from 'element-plus'
 const store = useUserStore()

@@ -235,7 +235,7 @@
     </div>
     <!--设置我的地址本-->
     <div class="saveBox flexRowAC">
-      <div class="saveTi flexRowAC" @click="goToMyAddress">
+      <div v-if="showAddressBookSettings" class="saveTi flexRowAC" @click="goToMyAddress">
         <oort-svg-icon
           name="setting"
           width="20"
@@ -264,7 +264,7 @@ import MyTag from './myTag.vue'
 import SearchPerson from './searchPerson.vue'
 import ScopePersonOrDept from './scopePersonOrDept.vue'
 import { useUserStore } from '@/store/modules/useraPaas'
-import { getUserList, getDeptList } from '@/api/unifiedUsert/sso'
+import { getUserList, getDeptList } from '@/api/system/directory'
 import { ElButton, ElIcon, ElMessage } from 'element-plus'
 import OortSvgIcon from '@/components/oortSvgIcon/index.vue'
 import Config from '@/config'
@@ -327,6 +327,7 @@ let chooseDeptList = ref<any>([]) // 选择的部门的合集
 let choosePersonList = ref<any>([]) // 选择人员的合集
 let chooseScopeUserList = ref<any>([]) // 选择的部门的合集
 let chooseScopeDeptList = ref<any>([]) // 选择人员的合集
+const showAddressBookSettings = false
 let active = ref<any>(1) // 激活的tab栏目
 if (props.mode === 2) {
   active.value = 2

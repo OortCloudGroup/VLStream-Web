@@ -77,7 +77,7 @@
               </div>
             </div>
             <div class="tabs-btn" style="position: absolute;right:25%;">
-              <el-radio-group v-model="tabActive" size="medium " @change="tabsAChange">
+              <el-radio-group v-model="tabActive" size="default" @change="tabsAChange">
                 <el-radio-button value="0">
                   全部
                 </el-radio-button>
@@ -126,7 +126,7 @@
                 {{ scope.row.point?.address }}
               </template>
             </el-table-column>
-            <el-table-column prop="item" label="事件类型" :width="clacPXToVW(120)" show-overflow-tooltip="true" />
+            <el-table-column prop="item" label="事件类型" :width="clacPXToVW(120)" :show-overflow-tooltip="true" />
             <el-table-column prop="pics" label="抓拍照片" :width="clacPXToVW(120)">
               <template #default="scope">
                 <!-- <div v-if="scope.row.pics.length > 0">
@@ -150,17 +150,16 @@
             <el-table-column prop="fileUrl" label="录制视频" :width="clacPXToVW(120)">
               <template #default="scope">
                 <div v-if="scope.row.videoUrl" class="video-container" @click="openVideoDialog(scope.row)">
-                  <!-- <oort-video-player :video="{ url: scope.row.videoUrl }" /> -->
                 </div>
                 <div v-else class="no-video">
                   <span>暂无视频</span>
                 </div>
               </template>
             </el-table-column>
-            <el-table-column prop="device_name" label="设备名称" :width="clacPXToVW(160)" show-overflow-tooltip="true" />
+            <el-table-column prop="device_name" label="设备名称" :width="clacPXToVW(160)" :show-overflow-tooltip="true" />
             <el-table-column prop="device_id" label="设备编号" />
-            <el-table-column prop="describe" label="事件描述" :width="clacPXToVW(120)" show-overflow-tooltip="true" />
-            <el-table-column prop="device_tag" label="标签" :width="clacPXToVW(160)" show-overflow-tooltip="true" />
+            <el-table-column prop="describe" label="事件描述" :width="clacPXToVW(120)" :show-overflow-tooltip="true" />
+            <el-table-column prop="device_tag" label="标签" :width="clacPXToVW(160)" :show-overflow-tooltip="true" />
             <el-table-column v-if="false" prop="status" label="告警状态" :width="clacPXToVW(140)">
               <template #default="scope">
                 <el-tag :type="getStatusType2(scope.row.mod_status)">
@@ -246,7 +245,7 @@
       :before-close="closeVideoDialog"
     >
       <div class="video-dialog-container">
-        <oort-video-player v-if="currentVideoUrl" :video="{ url: currentVideoUrl }" />
+        <OortVideoPlayer v-if="currentVideoUrl" :video="{ url: currentVideoUrl }" />
       </div>
     </el-dialog>
     <!-- 任务分配弹框 -->
@@ -266,7 +265,7 @@ import type Node from 'element-plus/es/components/tree/src/model/node'
 import SchedulingDialog from './components/schedulingDialog.vue'
 import ConfirmEventDialog from './components/confirmEventDialog/index.vue'
 import eventDetailsDialog from './components/eventDetailsDialog/index.vue'
-import oortVideoPlayer from '@/components/oortVideoPlayer.vue'
+import OortVideoPlayer from '@/components/oortVideoPlayer.vue'
 import { delEvent, eventList, event_item_list, event_group_list } from '@/api/smartCity/events'
 import { clacPXToVW } from '@/utils/index'
 import { useUserStore } from '@/store/modules/useraPaas'
@@ -277,6 +276,7 @@ import { covertCurrentLocationURL } from '@/utils/converGatewayPath'
 import dayjs from 'dayjs'
 
 const store = useUserStore()
+const getAccessToken = () => store.userInfo?.accessToken || store.token || sessionStorage.getItem('token') || sessionStorage.getItem('accessToken') || localStorage.getItem('apaas_token') || localStorage.getItem('accessToken') || ''
 const editShow = ref(false)
 const showMoreDelete = ref(false)
 const eventDetailsFBVis = ref(false) // 事件反馈
@@ -611,7 +611,7 @@ const itemFn = (tt) => {
 // 事件类型过滤
 const event_item_listFn = async() => {
   let data = {
-    accessToken: store.userInfo.accessToken,
+    accessToken: getAccessToken(),
     mod_type: 2 // 事件类型 1:事件拍传 2:主动安全
   }
   let res: any = await event_item_list(data)

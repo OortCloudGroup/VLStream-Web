@@ -166,6 +166,7 @@ import NewWorkOrderDispatch from '@/pages/processui/views/page/workOrderManage/n
 import dayjs from 'dayjs'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import MyWorkorderDetails from '@/pages/events/views/page/myWorkorder/myWorkorderDetails.vue'
+import { resolveWorkOrderAppContext } from '@/utils/workOrderAppContext'
 
 const store: any = useUserStore()
 const datePickerTime = ref([])
@@ -332,9 +333,8 @@ function handleDetail(row) {
   woVisi.value = true
 }
 
-onMounted(() => {
-  const appObjStr = window.sessionStorage.getItem('taskCenterClassify')
-  appObj.value = appObjStr ? JSON.parse(appObjStr) : null
+onMounted(async() => {
+  appObj.value = await resolveWorkOrderAppContext()
   myWorkorderFn()
 })
 

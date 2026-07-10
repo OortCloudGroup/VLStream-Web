@@ -311,7 +311,7 @@ import {
   transferTask, unClaimTask
 } from '@/api/processui'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { getUserList } from '@/api/unifiedUsert/sso'
+import { getUserList } from '@/api/system/directory'
 import { useUserStore } from '@/store/modules/useraPaas'
 
 const store: any = useUserStore()

@@ -8,7 +8,7 @@ const vlsSrc = path.resolve(__dirname, 'src')
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '')
   const backendTarget = env.VITE_DEV_PROXY_TARGET || 'http://127.0.0.1:8080'
-  const ssoTarget = env.VITE_SSO_PROXY_TARGET || 'http://oort.oortcloudsmart.com:21410/bus/apaas-sso'
+  const ssoTarget = env.VITE_SSO_PROXY_TARGET || backendTarget
   const apaasTarget = env.VITE_APAAS_PROXY_TARGET || 'http://oort.oortcloudsmart.com:21410'
 
   const backendProxy = {
@@ -49,6 +49,14 @@ export default defineConfig(({ mode }) => {
         '/system': backendProxy,
         '/blade-auth': backendProxy,
         '/blade-system': backendProxy,
+        '/workflow': backendProxy,
+        '/wf': backendProxy,
+        '/workorder': backendProxy,
+        '/WorkOrder': backendProxy,
+        '/model': backendProxy,
+        '/work': backendProxy,
+        '/rule': backendProxy,
+        '/task': backendProxy,
         '/auth': backendProxy,
         '/blade-job': backendProxy,
         '/vls': backendProxy,

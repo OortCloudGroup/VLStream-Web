@@ -81,6 +81,7 @@ import { deployModel, getModel } from '@/api/processui'
 import StepOne from '@/pages/task_center/views/page/components/stepOne.vue'
 import FormDesignerPage from '@/pages/processui/views/page/workOrderDesignManage/components/formDesignerPage.vue'
 import FlowDesignerPage from '@/pages/processui/views/page/workOrderDesignManage/components/flowDesignerPage.vue'
+import { getStoredWorkOrderAppContext } from '@/utils/workOrderAppContext'
 
 const router = useRouter()
 const route = useRoute()
@@ -90,8 +91,7 @@ let dItem = ref('')
 const currentForm = ref(null) // 表单设计
 const currentModel = ref(null) // 流程设计
 let appObj = ref<any>('') // 任务管理app
-let c:any = window.sessionStorage.getItem('taskCenterClassify')
-appObj.value = JSON.parse(c)
+appObj.value = getStoredWorkOrderAppContext() || {}
 
 // 当前模型
 const getModelFn = async() => {
@@ -110,7 +110,7 @@ const getModelFn = async() => {
     // 通知节点：工单有,流程无(workOrderAppAll:true)
     resData['notifyNode'] = route.query?.workOrderAppAll
     resData['appId'] = resData.modelId
-    resData['applicationId'] = appObj.value.applicationId
+    resData['applicationId'] = appObj.value?.applicationId
     currentModel.value = resData
   }
 }

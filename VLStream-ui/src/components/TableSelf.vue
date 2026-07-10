@@ -1,4 +1,3 @@
-<!-- eslint-disable vue/no-deprecated-dollar-listeners-api -->
 <!--
  *@Created by: 兰舰
  * Email: gglanjian@qq.com
@@ -16,7 +15,6 @@
     highlight-current-row
     @row-click="handleRowClick"
     @select="handleSelect"
-    v-on="$listeners"
   >
     <!-- 透传所有插槽 -->
     <template v-for="(_, slotName) in $slots" #[slotName]="slotProps">

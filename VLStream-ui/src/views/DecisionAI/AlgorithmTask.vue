@@ -136,7 +136,7 @@ export default {
       })
           .then(() => {
             this.disableRemoteCall();
-            this.$refs.crud.toggleSelection();
+            this.clearCrudSelection();
           });
     },
     handleSync() {
@@ -181,9 +181,15 @@ export default {
     selectionChange(list) {
       this.selectionList = list;
     },
+    clearCrudSelection() {
+      const crud = this.$refs.crud;
+      if (crud && typeof crud.toggleSelection === 'function') {
+        crud.toggleSelection();
+      }
+    },
     selectionClear() {
       this.selectionList = [];
-      this.$refs.crud.toggleSelection();
+      this.clearCrudSelection();
     },
     currentChange(currentPage) {
       this.page.currentPage = currentPage;

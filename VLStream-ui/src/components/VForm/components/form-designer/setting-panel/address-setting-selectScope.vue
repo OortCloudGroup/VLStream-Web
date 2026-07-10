@@ -43,7 +43,7 @@ import { ref, onMounted } from 'vue'
 import AddressSetingDialog from '@/components/personHome/addressSetingDialog.vue'
 import { ElDialog, ElIcon } from 'element-plus'
 import { useUserStore } from '@/store/modules/useraPaas'
-import { getUserList, getDeptList } from '@/api/unifiedUsert/sso'
+import { getUserList, getDeptList } from '@/api/system/directory'
 
 const props = defineProps({
   modelValue: {

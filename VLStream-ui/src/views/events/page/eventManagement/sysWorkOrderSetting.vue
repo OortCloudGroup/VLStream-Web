@@ -111,8 +111,10 @@ import WorkOrderBuilt from '@/pages/task_center/views/page/components/workOrderB
 import { useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import FormDesignerBuilt from '@/pages/task_center/views/page/components/formDesignerBuilt.vue'
+import { resolveWorkOrderAppContext } from '@/utils/workOrderAppContext'
 
 const store: any = useUserStore()
+const getAccessToken = () => store.userInfo?.accessToken || store.token || sessionStorage.getItem('token') || sessionStorage.getItem('accessToken') || localStorage.getItem('apaas_token') || localStorage.getItem('accessToken') || ''
 const router = useRouter()
 const props: any = defineProps(['act', 'app'])
 const tableData = ref<any>([])
@@ -153,6 +155,10 @@ const startClick = (item, index) => {
 
 // 新建
 function newEditClick(row) {
+  if (!appObj.value?.appId) {
+    ElMessage.warning('工单应用分类未初始化，暂不能新建模型')
+    return
+  }
   dVisi.value = true
   dItem.value = row || ''
 }
@@ -200,8 +206,12 @@ function delClick(row) {
 
 // 模型列表
 function getListFn() {
+  if (!appObj.value?.appId) {
+    tableData.value = []
+    return
+  }
   let data = {
-    accessToken: store.userInfo.accessToken,
+    accessToken: getAccessToken(),
     ...queryParams,
     workOrderCategory: appObj.value?.appId
   }
@@ -213,9 +223,11 @@ function getListFn() {
   })
 }
 
-onMounted(() => {
-  let c:any = window.sessionStorage.getItem('taskCenterClassify')
-  appObj.value = JSON.parse(c)
+onMounted(async() => {
+  appObj.value = props?.app?.appId ? props.app : await resolveWorkOrderAppContext()
+  if (!appObj.value?.appId) {
+    ElMessage.warning('未找到工单应用分类，请先初始化工单应用')
+  }
   getListFn()
 })
 </script>

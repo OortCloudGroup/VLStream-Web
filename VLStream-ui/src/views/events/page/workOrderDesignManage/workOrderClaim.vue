@@ -85,6 +85,7 @@ import { clacPXToVW } from '@/utils/index'
 // import { useRoute } from 'vue-router'
 import NewWorkOrderDispatch from '@/pages/processui/views/page/workOrderManage/newWorkOrderDispatch.vue'
 import dayjs from 'dayjs'
+import { resolveWorkOrderAppContext } from '@/utils/workOrderAppContext'
 
 // const route = useRoute()
 let appObj = ref<any>('')// 分类
@@ -147,9 +148,8 @@ function handleDetail(row) {
   ditem.value['type'] = '1'
 }
 
-onMounted(() => {
-  const appObjStr = window.sessionStorage.getItem('taskCenterClassify')
-  appObj.value = appObjStr ? JSON.parse(appObjStr) : null
+onMounted(async() => {
+  appObj.value = await resolveWorkOrderAppContext()
   getProcessList()
 })
 

@@ -81,7 +81,7 @@
 import { ref, onMounted } from 'vue'
 import { debounce } from 'lodash-es'
 // eslint-disable-next-line vue/no-dupe-keys
-import { getDeptUser, usedSet } from '@/api/unifiedUsert/sso'
+import { getDeptUser, usedSet } from '@/api/system/directory'
 import { useUserStore } from '@/store/modules/useraPaas'
 import { ElCheckbox, ElCheckboxGroup, ElTooltip, ElTree, ElInput } from 'element-plus'
 import OortImg from '@/components/oort_img.vue'

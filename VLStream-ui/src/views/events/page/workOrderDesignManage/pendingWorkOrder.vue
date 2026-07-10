@@ -84,6 +84,7 @@ import { todoWorkOrderList } from '@/api/processui/index'
 import { clacPXToVW } from '@/utils/index.ts'
 import TaskHandleDetail from '@/pages/processui/views/page/flowManage/taskHandleDetail.vue'
 import dayjs from 'dayjs'
+import { resolveWorkOrderAppContext } from '@/utils/workOrderAppContext'
 
 // const router = useRouter()
 // const route = useRoute()
@@ -145,9 +146,8 @@ function handleDetail(row) {
   ditem.value = row
 }
 
-onMounted(() => {
-  const appObjStr = window.sessionStorage.getItem('taskCenterClassify')
-  appObj.value = appObjStr ? JSON.parse(appObjStr) : null
+onMounted(async() => {
+  appObj.value = await resolveWorkOrderAppContext()
   getProcessList()
 })
 

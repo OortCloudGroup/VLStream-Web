@@ -13,7 +13,7 @@
 <script setup lang="ts">
 import { onMounted, ref, watch } from 'vue'
 import { useUserStore } from '@/store/modules/useraPaas'
-import { getUserList } from '@/api/unifiedUsert/sso'
+import { getUserList } from '@/api/system/directory'
 
 const store: any = useUserStore()
 const props = defineProps({

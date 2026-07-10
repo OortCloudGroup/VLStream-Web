@@ -184,6 +184,7 @@ import { ElMessage } from 'element-plus'
 import staffIcon from '@/assets/img/maintenance/staff.png'
 // import carIcon from '@/assets/img/location/car9.png'
 import CommonExpressions from '@/components/commonExpressions.vue'
+import PersonInfoCard from '@/components/PersonInfoCard.vue'
 // import CarListDialog from '@/components/carListDialog.vue'
 import { allocate } from '@/api/smartCity/events'
 const formRef = ref()

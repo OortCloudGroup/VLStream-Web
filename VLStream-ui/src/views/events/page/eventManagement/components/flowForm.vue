@@ -29,6 +29,7 @@ import { useUserStore } from '@/store/modules/useraPaas'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { stopProcess } from '@/api/processui/approval'
 import { event_item_list } from '@/api/smartCity/events'
+import { resolveWorkOrderAppContext } from '@/utils/workOrderAppContext'
 
 const store = useUserStore()
 const props = defineProps(['listObj'])
@@ -58,8 +59,7 @@ const workConfirm = (val) => {
 // 工单-列表（流程管理-事件管理）
 const workListFn = async() => {
   try {
-    const appObjStr = window.sessionStorage.getItem('taskCenterClassify')
-    appObj.value = appObjStr ? JSON.parse(appObjStr) : null
+    appObj.value = await resolveWorkOrderAppContext()
     const data = {
       accessToken: store.userInfo?.accessToken,
       pageNum: 1,
@@ -74,6 +74,8 @@ const workListFn = async() => {
         value: item.modelKey
       }))
       event_item_listFn() // 事件类型
+    } else {
+      options.value = []
     }
   } catch (error) {
     // 获取工单列表失败，使用空数组

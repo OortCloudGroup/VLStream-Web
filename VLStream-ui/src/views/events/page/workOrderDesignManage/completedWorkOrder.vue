@@ -106,6 +106,7 @@ import { clacPXToVW } from '@/utils/index.ts'
 import TaskHandleDetail from '@/pages/processui/views/page/flowManage/taskHandleDetail.vue'
 // import { useRoute } from 'vue-router'
 import dayjs from 'dayjs'
+import { resolveWorkOrderAppContext } from '@/utils/workOrderAppContext'
 
 // const route = useRoute()
 const dVisi = ref<boolean>(false)
@@ -182,9 +183,8 @@ function handleCallBack(row) {
   console.log('撤回', row)
 }
 
-onMounted(() => {
-  const appObjStr = window.sessionStorage.getItem('taskCenterClassify')
-  appObj.value = appObjStr ? JSON.parse(appObjStr) : null
+onMounted(async() => {
+  appObj.value = await resolveWorkOrderAppContext()
   getProcessList()
 })
 

@@ -63,7 +63,7 @@ Copyright apaas-front-team. All rights reserved.
 </template>
 
 <script>
-import { getUserList } from '@/api/unifiedUsert/sso'
+import { getUserList } from '@/api/system/directory'
 import { debounce } from 'lodash-es'
 import { useUserStore } from '@/store/modules/useraPaas'
 import OortImg from '@/components/oort_img.vue'

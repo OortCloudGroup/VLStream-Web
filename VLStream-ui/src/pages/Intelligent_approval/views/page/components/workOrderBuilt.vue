@@ -85,6 +85,7 @@ import { addModel, copyModel, processCategoryList, updateModel } from '@/api/pro
 import { ElMessage } from 'element-plus'
 import { onMounted, reactive, ref } from 'vue'
 import Config from '@/config'
+import { getStoredWorkOrderAppContext } from '@/utils/workOrderAppContext'
 
 const props = defineProps(['item', 'type', 'app', 'isType'])/* type:0新增 1copy 2编辑 isType:工单1 流程0 */
 const emits: any = defineEmits(['handle', 'close'])
@@ -95,13 +96,12 @@ const iconId = ref('')
 const addModelType = ref(props.type || 0) // 0 新增 、1，copy ， 2 编辑
 let appObj = ref<any>('') // 任务管理app
 let menuList = ref<any>([]) //  分组(例如人事分类)列表
-let c:any = window.sessionStorage.getItem('taskCenterClassify')
-appObj.value = JSON.parse(c)
+appObj.value = props.app?.appId ? props.app : getStoredWorkOrderAppContext() || {}
 const form = reactive({
   modelId: undefined,
   modelKey: 'Process_' + new Date().getTime(),
   modelName: '',
-  category: props.app?.appId,
+  category: props.app?.appId || appObj.value?.appId,
   description: undefined, // 所属分类
   processCategoryId: undefined, // 分组
   showMobile: 0,
@@ -155,6 +155,10 @@ const saveCategory = async(formEl: any) => {
   if (!formEl) return
   await formEl.validate(async(valid: boolean) => {
     if (valid) {
+      if (!form.category) {
+        ElMessage.error('工单应用分类未初始化，无法保存模型')
+        return
+      }
       // 自动创建表单-标识工单还是流程-表单所属分类
       form['type'] = props.isType // 0 流程 1 工单
       form['categoryId'] = appObj.value?.categoryId // 表单所属分类，同时标识是否需要同时创建表单

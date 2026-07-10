@@ -78,7 +78,7 @@ Copyright apaas-front-team. All rights reserved.
 </template>
 
 <script>
-import { addressList, addressUserList } from '@/api/unifiedUsert/sso'
+import { addressList, addressUserList } from '@/api/system/directory'
 import { useUserStore } from '@/store/modules/useraPaas'
 import { ElCheckbox, ElCheckboxGroup } from 'element-plus'
 

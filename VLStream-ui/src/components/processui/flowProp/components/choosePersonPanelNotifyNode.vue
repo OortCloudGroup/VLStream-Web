@@ -170,9 +170,8 @@ import id2Name from '@/components/ID2Name.vue'
 import { CircleCloseFilled } from '@element-plus/icons-vue'
 import { ElCol, ElRow, ElRadioGroup, ElRadio, ElDialog, ElIcon, ElSelect, ElOption } from 'element-plus'
 import OortImg from '@/components/oort_img.vue'
-import { roleList } from '@/api/unifiedUsert/apaasAuth'
 import { useUserStore } from '@/store/modules/useraPaas'
-import { getDeptList } from '@/api/unifiedUsert/sso'
+import { getDeptList, roleList } from '@/api/system/directory'
 
 const store = useUserStore()
 const props = defineProps({

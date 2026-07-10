@@ -56,6 +56,8 @@ import { computed, ref, watch } from 'vue'
 import { listModel } from '@/api/processui'
 import { useUserStore } from '@/store/modules/useraPaas'
 import { openApaasWebPage } from '@/utils/apaasApiBase'
+import { resolveWorkOrderAppContext } from '@/utils/workOrderAppContext'
+import Config from '@/config'
 
 interface OptionItem {
   label: string
@@ -91,8 +93,7 @@ const workOrderList = ref<any[]>([]) // 保存完整的工单列表数据
 // 获取工单列表
 const fetchWorkOrderList = async() => {
   try {
-    const appObjStr = window.sessionStorage.getItem('taskCenterClassify')
-    const appObj = appObjStr ? JSON.parse(appObjStr) : null
+    const appObj = await resolveWorkOrderAppContext()
     const data = {
       accessToken: store.userInfo?.accessToken,
       pageNum: 1,
@@ -114,6 +115,9 @@ const fetchWorkOrderList = async() => {
           localValue.value = matchedWorkOrder.modelId
         }
       }
+    } else {
+      options.value = []
+      workOrderList.value = []
     }
   } catch (error) {
     // 获取工单列表失败，使用空数组

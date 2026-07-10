@@ -12,7 +12,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import { getDeptList } from '@/api/unifiedUsert/sso'
+import { getDeptList } from '@/api/system/directory'
 import { useUserStore } from '@/store/modules/useraPaas'
 const props = defineProps({
   deptId: {

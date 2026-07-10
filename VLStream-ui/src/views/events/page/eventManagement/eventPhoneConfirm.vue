@@ -50,7 +50,6 @@
           </div>
           <div class="d_r_content">
             <div v-if="eventDetailData.videoUrl" class="video-container" @click="openVideoDialog(eventDetailData)">
-              <!-- <oort-video-player :video="{ url: scope.row.videoUrl }" /> -->
             </div>
             <div v-else class="no-video">
               <span>暂无视频</span>
@@ -214,7 +213,7 @@
       width="80%"
     >
       <div class="video-dialog-container">
-        <oort-video-player v-if="currentVideoUrl" :video="{ url: currentVideoUrl }" />
+        <OortVideoPlayer v-if="currentVideoUrl" :video="{ url: currentVideoUrl }" />
       </div>
     </el-dialog>
   </el-dialog>
@@ -223,10 +222,12 @@
 import { ref, computed, watch, onMounted } from 'vue'
 import MultiImageUpload from './components/multiImageUpload.vue'
 import CommonExpressions from '@/components/commonExpressions.vue'
+import OortVideoPlayer from '@/components/oortVideoPlayer.vue'
 import { eventDetail, addFeedback, feedbackList } from '@/api/smartCity/events'
 import { useUserStore } from '@/store/modules/useraPaas'
 import { ElMessage } from 'element-plus'
 import { listModel } from '@/api/processui'
+import { resolveWorkOrderAppContext } from '@/utils/workOrderAppContext'
 
 const store = useUserStore()
 const activeIndex = ref('1')
@@ -360,8 +361,7 @@ const formRules = ref({
 // 获取工单列表
 const fetchWorkOrderList = async() => {
   try {
-    const appObjStr = window.sessionStorage.getItem('taskCenterClassify')
-    const appObj = appObjStr ? JSON.parse(appObjStr) : null
+    const appObj = await resolveWorkOrderAppContext()
     const data = {
       accessToken: store.userInfo?.accessToken,
       pageNum: 1,
@@ -375,6 +375,8 @@ const fetchWorkOrderList = async() => {
         label: item.modelName,
         value: item.modelId
       }))
+    } else {
+      options.value = []
     }
   } catch (error) {
     // 获取工单列表失败，使用空数组
