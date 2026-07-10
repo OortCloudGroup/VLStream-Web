@@ -28,6 +28,8 @@
     "@shopify/draggable": "^1.2.1",
     "@smallwei/avue": "^3.7.4",
     "@types/leaflet": "^1.9.20",
+    "@vueuse/core": "^14.3.0",
+    "VueDraggable": "git+http://192.168.88.125/front-npm/vuedraggable.git#v1.0.1",
     "axios": "^1.4.0",
     "clipboard": "^2.0.11",
     "codemirror": "^6.0.2",
@@ -49,7 +51,6 @@
     "vue": "^3.3.4",
     "vue-i18n": "^11.1.3",
     "vue-router": "^4.2.4",
-    "vuedraggable": "^4.1.0",
     "vuex": "^4.1.0",
     "xgplayer": "^3.0.24"
   },

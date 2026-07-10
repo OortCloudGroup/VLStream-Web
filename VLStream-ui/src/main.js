@@ -44,7 +44,7 @@ import ExportExcelPdf from '@/components/exportExcelPdf.vue'
 import Directive from '@/directive/index'
 import commonComponents from '@/components/index.js'
 import indexVform from '@/components/index_vform.js'
-import Draggable from 'vuedraggable'
+import Draggable from 'VueDraggable'
 
 app.component('AiIconRemark', aiIconRemark)
 app.component('TableSelf', TableSelf)
