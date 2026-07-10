@@ -199,12 +199,6 @@ const routes = [
         meta: { title: '岗位管理', icon: '岗位管理' }
       },
       {
-        path: '/system/tenants',
-        name: 'SystemTenantManagement',
-        component: () => import('@/views/System/TenantManagement.vue'),
-        meta: { title: '租户管理', icon: '租户管理' }
-      },
-      {
         path: '/system/data-scopes',
         name: 'SystemDataScopeManagement',
         component: () => import('@/views/System/DataScopeManagement.vue'),
@@ -369,11 +363,11 @@ router.beforeEach(async (to, from, next) => {
         return
       } else {
         console.log('Session token验证失败，清除无效token')
-              sessionStorage.removeItem('accessToken')
+        authManager.clearSessionTokens()
             }
           } catch (error) {
             console.error('Session token验证失败:', error)
-        sessionStorage.removeItem('accessToken')
+        authManager.clearSessionTokens()
       }
     }
 

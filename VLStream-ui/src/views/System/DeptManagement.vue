@@ -46,7 +46,6 @@
       <el-table-column type="selection" width="55" />
       <el-table-column prop="deptName" label="部门名称" min-width="180" />
       <el-table-column prop="fullName" label="部门全称" min-width="200" />
-      <el-table-column prop="tenantId" label="租户ID" min-width="120" />
       <el-table-column prop="sort" label="排序" width="80" align="center" />
       <el-table-column label="操作" width="180" fixed="right" align="right">
         <template #default="scope">
@@ -77,17 +76,6 @@
       label-width="100px"
       style="padding: 10px 20px"
     >
-      <el-form-item label="所属租户" prop="tenantId">
-        <el-select v-model="form.tenantId" placeholder="请选择租户" style="width: 100%" clearable>
-          <el-option
-            v-for="item in tenantOptions"
-            :key="item.tenantId"
-            :label="item.tenantName"
-            :value="item.tenantId"
-          />
-        </el-select>
-      </el-form-item>
-
       <el-form-item label="上级部门" prop="parentId">
         <el-tree-select
           v-model="form.parentId"
@@ -131,7 +119,6 @@ import { Refresh, Search } from '@element-plus/icons-vue'
 import SystemPageShell from './components/SystemPageShell.vue'
 import ActionButtonGroup from '@/components/ActionButtonGroup.vue'
 import { getDeptList, submitDept, removeDepts } from '@/api/system/dept'
-import { getTenantSelect } from '@/api/system/tenant'
 import { buildTree, getPayload, normalizeTree, joinIds, isSuccess } from './utils/response'
 
 const loading = ref(false)
@@ -142,7 +129,6 @@ const selectedRows = ref([])
 const tableData = ref([])
 
 // 选项下拉数据
-const tenantOptions = ref([])
 const deptTreeOptions = ref([])
 
 // 查询过滤参数
@@ -189,18 +175,6 @@ async function loadData() {
     ElMessage.error('获取部门数据失败')
   } finally {
     loading.value = false
-  }
-}
-
-/**
- * 异步获取当前所有有效的租户
- */
-async function loadTenants() {
-  try {
-    const res = await getTenantSelect()
-    tenantOptions.value = getPayload(res) || []
-  } catch (error) {
-    console.error('获取租户列表失败:', error)
   }
 }
 
@@ -329,7 +303,6 @@ function handleBatchRemove() {
 // 挂载时加载数据
 onMounted(() => {
   loadData()
-  loadTenants()
 })
 </script>
 

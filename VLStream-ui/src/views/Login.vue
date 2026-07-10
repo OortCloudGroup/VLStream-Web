@@ -23,16 +23,6 @@
           :rules="loginRules"
           @submit.prevent="handleLogin"
         >
-          <!-- 租户选择 -->
-          <el-form-item prop="tenantPhrase">
-            <el-input
-              v-model="loginForm.tenantPhrase"
-              placeholder="请输入租户标识"
-              prefix-icon="el-icon-office-building"
-              size="large"
-            />
-          </el-form-item>
-
           <!-- 用户名 -->
           <el-form-item prop="loginId">
             <el-input
@@ -104,16 +94,16 @@ const route = useRoute()
 const authManager = new AuthManager()
 const { sm2 } = smCrypto
 const BLADE_AUTH_PUBLIC_KEY = import.meta.env.VITE_BLADE_AUTH_PUBLIC_KEY || '049787e408dea94acb3655acc5a7c7c7010bb9f140c84926c667ea616366082a118141c8dcb3e78a9d85d64fb765a250ff73448b18938f2219b94f782e28e1df64'
+const SINGLE_TENANT_ID = '000000'
 
 // 表单引用
 const loginFormRef = ref()
 
 // 登录表单数据
 const loginForm = reactive({
-  tenantPhrase: '',
   loginId: '',
   password: '',
-  tenantId: '' // 保留字段但不通过API获取
+  tenantId: SINGLE_TENANT_ID
 })
 
 // 登录状态
@@ -121,9 +111,6 @@ const loginLoading = ref(false)
 
 // 表单验证规则
 const loginRules = {
-  tenantPhrase: [
-    { required: true, message: '请输入租户标识', trigger: 'blur' }
-  ],
   loginId: [
     { required: true, message: '请输入用户名', trigger: 'blur' }
   ],
@@ -151,7 +138,7 @@ const handleLogin = async () => {
     // 构建 SpringBlade 登录参数
     const loginData = {
       grantType: 'password',
-      tenantId: loginForm.tenantPhrase,
+      tenantId: SINGLE_TENANT_ID,
       account: loginForm.loginId,
       password: encryptPassword(loginForm.password)
     }
@@ -229,11 +216,6 @@ onMounted(async () => {
     } catch (error) {
       console.error('本地token验证失败:', error)
     }
-  }
-
-  // 自动获取默认租户ID
-  if (loginForm.tenantPhrase) {
-    // 不再需要getTenantId，因为tenantPhrase就是tenant_id
   }
 })
 </script>

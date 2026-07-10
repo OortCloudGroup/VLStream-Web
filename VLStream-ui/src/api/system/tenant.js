@@ -1,4 +1,5 @@
 import request from '@/utils/request'
+import { SINGLE_TENANT_ID } from './ruoyiCompat'
 
 /**
  * 分页查询租户列表
@@ -24,7 +25,12 @@ export function getTenantSelect(params) {
  * @returns {Promise} 返回请求响应的 Promise 对象
  */
 export function submitTenant(data) {
-  return request({ url: '/blade-system/tenant/submit', method: 'post', data })
+  return Promise.resolve({
+    code: 200,
+    success: true,
+    msg: '单租户模式已固定默认租户',
+    data: { ...(data || {}), tenantId: SINGLE_TENANT_ID }
+  })
 }
 
 /**
@@ -33,5 +39,10 @@ export function submitTenant(data) {
  * @returns {Promise} 返回请求响应的 Promise 对象
  */
 export function removeTenants(ids) {
-  return request({ url: '/blade-system/tenant/remove', method: 'post', params: { ids } })
+  return Promise.resolve({
+    code: 200,
+    success: true,
+    msg: '单租户模式不删除默认租户',
+    data: true
+  })
 }

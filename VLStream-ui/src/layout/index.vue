@@ -35,44 +35,6 @@
         </div>
         
         <div class="header-right">
-          <!-- 租户信息下拉框 -->
-          <el-dropdown class="tenant-dropdown">
-            <span class="tenant-info">
-              <el-icon><OfficeBuilding /></el-icon>
-              {{ currentTenant.name }}
-              <el-icon><ArrowDown /></el-icon>
-            </span>
-            <template #dropdown>
-              <el-dropdown-menu>
-                <el-dropdown-item 
-                  v-for="tenant in tenantList" 
-                  :key="tenant.id"
-                  @click="switchTenant(tenant)"
-                  :class="{ 'is-active': tenant.id === currentTenant.id }"
-                >
-                  <el-icon><OfficeBuilding /></el-icon>
-                  {{ tenant.name }}
-                  <el-tag 
-                    v-if="tenant.status !== 1" 
-                    :type="tenant.status === 0 ? 'danger' : 'warning'" 
-                    size="small" 
-                    style="margin-left: 8px;"
-                  >
-                    {{ tenant.status === 0 ? '禁用' : '过期' }}
-                  </el-tag>
-                </el-dropdown-item>
-                <el-dropdown-item v-if="tenantList.length === 0" disabled>
-                  <el-icon><OfficeBuilding /></el-icon>
-                  暂无租户信息
-                </el-dropdown-item>
-                <el-dropdown-item divided>
-                  <el-icon><Setting /></el-icon>
-                  租户管理
-                </el-dropdown-item>
-              </el-dropdown-menu>
-            </template>
-          </el-dropdown>
-          
           <!-- 用户信息下拉框 -->
           <el-dropdown>
             <span class="user-info">
@@ -519,7 +481,6 @@ const menuRoutesMap = {
     { path: '/system/menus', meta: { title: '菜单管理', icon: '菜单管理' } },
     { path: '/system/depts', meta: { title: '部门管理', icon: '部门管理' } },
     { path: '/system/posts', meta: { title: '岗位管理', icon: '岗位管理' } },
-    { path: '/system/tenants', meta: { title: '租户管理', icon: '租户管理' } },
     { path: '/system/data-scopes', meta: { title: '数据权限', icon: '数据权限' } },
     { path: '/system/api-scopes', meta: { title: '接口权限', icon: '接口权限' } }
   ]
@@ -834,7 +795,6 @@ const getMenuIcon = (iconName) => {
     '菜单管理': MenuIcon,
     '部门管理': OfficeBuilding,
     '岗位管理': Briefcase,
-    '租户管理': OfficeBuilding,
     '数据权限': Key,
     '接口权限': Lock
   }
@@ -959,28 +919,6 @@ const handleUserTokenUpdated = async (event) => {
   color: #409eff;
   background-color: #f0f9ff;
   border-bottom-color: #409eff;
-}
-
-/* 租户信息样式 */
-.tenant-dropdown {
-  margin-right: 16px;
-}
-
-.tenant-info {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  cursor: pointer;
-  padding: 8px 12px;
-  border-radius: 4px;
-  transition: background-color 0.3s;
-  color: #606266;
-  font-size: 14px;
-}
-
-.tenant-info:hover {
-  background-color: #f5f7fa;
-  color: #409eff;
 }
 
 /* 用户信息样式 */

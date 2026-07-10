@@ -57,7 +57,6 @@
       <el-table-column type="selection" width="55" />
       <el-table-column prop="roleName" label="角色名称" min-width="180" />
       <el-table-column prop="roleAlias" label="角色别名" min-width="150" />
-      <el-table-column prop="tenantId" label="租户ID" min-width="120" />
       <el-table-column prop="sort" label="排序" width="80" align="center" />
       <el-table-column label="操作" width="220" fixed="right" align="right">
         <template #default="scope">
@@ -91,17 +90,6 @@
       label-width="100px"
       style="padding: 10px 20px"
     >
-      <el-form-item label="所属租户" prop="tenantId">
-        <el-select v-model="form.tenantId" placeholder="请选择租户" style="width: 100%" clearable>
-          <el-option
-            v-for="item in tenantOptions"
-            :key="item.tenantId"
-            :label="item.tenantName"
-            :value="item.tenantId"
-          />
-        </el-select>
-      </el-form-item>
-
       <el-form-item label="上级角色" prop="parentId">
         <el-tree-select
           v-model="form.parentId"
@@ -149,7 +137,6 @@ import SystemPageShell from './components/SystemPageShell.vue'
 import PermissionGrantDialog from './components/PermissionGrantDialog.vue'
 import ActionButtonGroup from '@/components/ActionButtonGroup.vue'
 import { getRoleList, submitRole, removeRoles } from '@/api/system/role'
-import { getTenantSelect } from '@/api/system/tenant'
 import { buildTree, getPayload, normalizeTree, joinIds, isSuccess } from './utils/response'
 
 const loading = ref(false)
@@ -160,7 +147,6 @@ const selectedRows = ref([])
 const tableData = ref([])
 
 // 选项下拉列表数据
-const tenantOptions = ref([])
 const roleTreeOptions = ref([])
 
 // 查询参数
@@ -210,18 +196,6 @@ async function loadData() {
     ElMessage.ElMessage?.error('获取角色列表数据失败')
   } finally {
     loading.value = false
-  }
-}
-
-/**
- * 异步加载当前拥有的租户选择项
- */
-async function loadTenants() {
-  try {
-    const res = await getTenantSelect()
-    tenantOptions.value = getPayload(res) || []
-  } catch (error) {
-    console.error('获取租户列表失败:', error)
   }
 }
 
@@ -358,7 +332,6 @@ function handleOpenGrant(row) {
 // 挂载时加载数据
 onMounted(() => {
   loadData()
-  loadTenants()
 })
 </script>
 

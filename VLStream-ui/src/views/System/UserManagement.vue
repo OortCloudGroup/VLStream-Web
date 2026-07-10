@@ -178,18 +178,6 @@
             />
           </el-form-item>
         </el-col>
-        <el-col :span="12">
-          <el-form-item label="所属租户" prop="tenantId">
-            <el-select v-model="form.tenantId" placeholder="请选择租户" style="width: 100%" clearable>
-              <el-option
-                v-for="item in options.tenants"
-                :key="item.tenantId"
-                :label="item.tenantName"
-                :value="item.tenantId"
-              />
-            </el-select>
-          </el-form-item>
-        </el-col>
       </el-row>
 
       <el-row :gutter="20">
@@ -299,8 +287,9 @@ import {
 import { getRoleTree } from '@/api/system/role'
 import { getDeptTree } from '@/api/system/dept'
 import { getPostSelect } from '@/api/system/post'
-import { getTenantSelect } from '@/api/system/tenant'
 import { getPayload, getRecords, getTotal, normalizeTree, joinIds, isSuccess } from './utils/response'
+
+const SINGLE_TENANT_ID = '000000'
 
 // 搜索过滤与加载状态
 const loading = ref(false)
@@ -333,7 +322,7 @@ const form = ref({
   phone: '',
   sex: null,
   birthday: '',
-  tenantId: '',
+  tenantId: SINGLE_TENANT_ID,
   deptId: '',
   postId: '',
   roleId: ''
@@ -348,8 +337,7 @@ const rules = {
 const options = reactive({
   roles: [],
   depts: [],
-  posts: [],
-  tenants: []
+  posts: []
 })
 
 // 独立分配角色弹窗数据
@@ -361,20 +349,18 @@ const grantForm = reactive({
 })
 
 /**
- * 异步加载下拉/树形选择器选项，包括角色树、部门树、岗位列表、租户列表
+ * 异步加载下拉/树形选择器选项，包括角色树、部门树、岗位列表
  */
 async function loadOptions() {
   try {
-    const [roleRes, deptRes, postRes, tenantRes] = await Promise.all([
+    const [roleRes, deptRes, postRes] = await Promise.all([
       getRoleTree(),
       getDeptTree(),
-      getPostSelect(),
-      getTenantSelect()
+      getPostSelect()
     ])
     options.roles = normalizeTree(getPayload(roleRes) || [])
     options.depts = normalizeTree(getPayload(deptRes) || [])
     options.posts = getPayload(postRes) || []
-    options.tenants = getPayload(tenantRes) || []
   } catch (error) {
     console.error('加载系统选项参数失败:', error)
   }
@@ -460,7 +446,7 @@ function handleCreate() {
     phone: '',
     sex: null,
     birthday: '',
-    tenantId: '',
+    tenantId: SINGLE_TENANT_ID,
     deptId: '',
     postId: '',
     roleId: ''
@@ -579,7 +565,7 @@ function handleOpenGrant(row) {
 }
 
 /**
- * 提交角色分配修改，调用后端 /system/user/grant 接口
+ * 提交角色分配修改，调用后端 /system/user/authRole 接口
  */
 async function handleGrantSubmit() {
   if (!activeUser.value?.id) return
@@ -708,10 +694,27 @@ onMounted(() => {
 .toolbar-left {
   display: flex;
   align-items: center;
+  flex: 1 1 520px;
+  min-width: 360px;
 }
 
 .demo-form-inline .el-form-item {
   margin-bottom: 0;
   margin-right: 16px;
+}
+
+.demo-form-inline {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  row-gap: 8px;
+}
+
+.demo-form-inline :deep(.el-input) {
+  width: 180px;
+}
+
+.toolbar-right {
+  flex: 0 0 auto;
 }
 </style>
