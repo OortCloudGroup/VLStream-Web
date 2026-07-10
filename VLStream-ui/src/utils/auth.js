@@ -81,14 +81,12 @@ export class AuthManager {
             console.log('Session token验证成功，用户:', userInfo.userName || userInfo.username)
             return userInfo
           } else {
-            console.log('Session token验证失败，但不立即清除token')
-            // 改进：不立即清除token，可能是临时验证失败
-            // this.clearSessionTokens()
+            console.log('Session token验证失败，清除无效token')
+            this.clearSessionTokens()
           }
         } catch (error) {
           console.error('Session token验证失败:', error)
-          // 改进：不立即清除token，可能是网络问题
-          // this.clearSessionTokens()
+          this.clearSessionTokens()
         }
       }
 
@@ -100,9 +98,13 @@ export class AuthManager {
           if (userInfo) {
             console.log('localStorage token验证成功，用户:', userInfo.userName || userInfo.username)
             return userInfo
+          } else {
+            console.log('localStorage token验证失败，清除无效token')
+            this.clearLocalTokens()
           }
         } catch (error) {
           console.error('localStorage token验证失败:', error)
+          this.clearLocalTokens()
         }
       }
 
@@ -549,35 +551,40 @@ export class AuthManager {
 
   // 检查本地token是否有效
   async checkLocalToken() {
-    // 只检查Session Storage中的用户信息（以sessionStorage为准）
-    const sessionUserInfo = sessionStorage.getItem('userInfo')
-    if (sessionUserInfo) {
+    const sessionToken = sessionStorage.getItem('accessToken') || sessionStorage.getItem('token')
+    if (sessionToken) {
       try {
-        const userInfo = JSON.parse(sessionUserInfo)
-        const sessionToken = sessionStorage.getItem('accessToken')
-        if (sessionToken) {
-          console.log('验证Session Storage中的token:', sessionToken)
-          const verifiedUserInfo = await this.verifyToken(sessionToken)
-          if (verifiedUserInfo) {
-            console.log('Session Storage token验证成功')
-            return verifiedUserInfo
-          } else {
-            console.log('Session Storage token验证失败，清除无效信息')
-            // 清除无效的Session Storage信息
-            sessionStorage.removeItem('userInfo')
-            sessionStorage.removeItem('accessToken')
-          }
+        console.log('验证Session Storage中的token:', sessionToken)
+        const verifiedUserInfo = await this.verifyToken(sessionToken)
+        if (verifiedUserInfo) {
+          console.log('Session Storage token验证成功')
+          return verifiedUserInfo
         }
+        console.log('Session Storage token验证失败，清除无效信息')
+        this.clearSessionTokens()
       } catch (error) {
         console.error('Session Storage用户信息验证失败:', error)
-        // 清除无效的Session Storage信息
-        sessionStorage.removeItem('userInfo')
-        sessionStorage.removeItem('accessToken')
+        this.clearSessionTokens()
       }
     }
-    
-    // 如果sessionStorage中没有有效信息，也不检查localStorage
-    // console.log('Session Storage中没有有效的用户信息')
+
+    const localToken = localStorage.getItem('accessToken') || localStorage.getItem('token')
+    if (localToken) {
+      try {
+        console.log('验证localStorage中的token:', localToken)
+        const verifiedUserInfo = await this.verifyToken(localToken)
+        if (verifiedUserInfo) {
+          console.log('localStorage token验证成功')
+          return verifiedUserInfo
+        }
+        console.log('localStorage token验证失败，清除无效信息')
+        this.clearLocalTokens()
+      } catch (error) {
+        console.error('localStorage用户信息验证失败:', error)
+        this.clearLocalTokens()
+      }
+    }
+
     return null
   }
 

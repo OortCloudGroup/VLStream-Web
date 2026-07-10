@@ -41,6 +41,7 @@ export const applyAuthHeaders = (config) => {
   if (token) {
     const authValue = token.toLowerCase().startsWith('bearer ') ? token : `Bearer ${token}`
     config.headers.Authorization = authValue
+    config.headers.authorization = authValue
     config.headers['blade-auth'] = authValue
     config.headers.accesstoken = token
   }

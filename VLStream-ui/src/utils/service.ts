@@ -24,6 +24,7 @@ import { useErrorMsgStoreHook } from '@/store/modules/useErrorMsg'
 import useGoWhere  from '@/hooks/useGoWhere'
 import { ElMessageBox } from 'element-plus'
 import { refreshToken } from '@/api/unifiedUsert/sso'
+import { applyAuthHeaders, getStoredToken } from '@/utils/request'
 
 
 import { useUserStoreHook } from '@/store/modules/useraPaas'
@@ -224,6 +225,10 @@ function createService() {
           });
         }
       }
+      const token = applyAuthHeaders(config)
+      if (token && headers) {
+        headers.AccessToken = token
+      }
       return config
     },
     // 发送失败
@@ -325,17 +330,26 @@ function createService() {
 /** 创建请求方法 */
 function createRequestFunction(service: AxiosInstance) {
   return function <T>(config: AxiosRequestConfig): Promise<T> {
-    const configDefault = {
+      const configDefault = {
       headers: {
         // 携带 Token
         'Content-Type': get(config, 'headers.Content-Type', 'application/json'),
         ...Config.headers,
-        'AccessToken': getToken()
+        'AccessToken': getStoredToken() || getToken()
       },
       timeout: config.timeout || 10 * 1000,
       data: {}
     }
-    return service(Object.assign(configDefault, config)).then()
+    const mergedConfig = Object.assign(configDefault, config)
+    mergedConfig.headers = {
+      ...configDefault.headers,
+      ...(config.headers as Record<string, any> || {})
+    }
+    const token = applyAuthHeaders(mergedConfig)
+    if (token) {
+      mergedConfig.headers.AccessToken = token
+    }
+    return service(mergedConfig).then()
   }
 }
 

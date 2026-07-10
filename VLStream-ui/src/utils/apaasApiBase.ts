@@ -22,6 +22,12 @@ export function apaasServiceUrl(service: string, path = ''): string {
   const prefix = getApaasGatewayPrefix()
   const svc = service.replace(/^\/+|\/+$/g, '')
   const normalizedPath = String(path || '').replace(/^\//, '')
+  const serviceKey = svc.toLowerCase()
+  if (import.meta.env.DEV
+    && (serviceKey === 'apaas-workflowforms' || serviceKey === 'apaas-location-service')
+    && import.meta.env.VITE_APAAS_WORKFLOWFORMS_DIRECT !== 'false') {
+    return normalizedPath ? `/${normalizedPath}` : '/'
+  }
   if (!normalizedPath) {
     return `${prefix}/${svc}`
   }
